@@ -5,7 +5,8 @@ import "math"
 const earthRadiusInKilometres = 6371
 
 // Haversine calculates distance between two GeoPoints using Haversine formula.
-func Haversine(one, two *GeoPoint) Kilometres {
+// https://en.wikipedia.org/wiki/Haversine_formula
+func Haversine(one, two GeoPoint) Kilometres {
 	lat1 := one.Latitude.Radians()
 	lng1 := one.Longitude.Radians()
 	lat2 := two.Latitude.Radians()

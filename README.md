@@ -1,8 +1,6 @@
-# geo
+# [github.com/strongo/geopoint](https://github.com/strongo/geopoint)
 
 Go library to represent GPS coordinates and calculate distance between 2 geo points.
-
-Cloned from [github.com/marcinwyszynski/geopoint](https://github.com/marcinwyszynski/geopoint) and refactored.
 
 ## Types
 
@@ -13,3 +11,15 @@ Cloned from [github.com/marcinwyszynski/geopoint](https://github.com/marcinwyszy
 - [Angles](angles.go)
     - Degrees
     - Radians
+- [Formulas](formulas.go)
+    - Distance calculation using [Haversian formula](https://en.wikipedia.org/wiki/Haversine_formula)
+
+## Credits
+
+Originally cloned from
+[github.com/marcinwyszynski/geopoint](https://github.com/marcinwyszynski/geopoint)
+and refactored.
+
+## [License](LICENSE)
+
+Licensed under [MIT license](LICENSE).

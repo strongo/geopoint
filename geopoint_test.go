@@ -29,7 +29,7 @@ func TestGeoPoint_DistanceTo(t *testing.T) {
 		Longitude Degrees
 	}
 	type args struct {
-		another *GeoPoint
+		another GeoPoint
 		f       Formula
 	}
 	//goland:noinspection GoPreferNilSlice
@@ -56,8 +56,8 @@ func TestGeoPoint_DistanceTo(t *testing.T) {
 
 func TestHaversine(t *testing.T) {
 	type args struct {
-		one *GeoPoint
-		two *GeoPoint
+		one GeoPoint
+		two GeoPoint
 	}
 	//goland:noinspection GoPreferNilSlice
 	tests := []struct {

@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: go get ./...
         run: go get ./...

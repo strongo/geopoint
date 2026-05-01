@@ -16,3 +16,5 @@
 
 # IDEs
 .idea/
+
+.claude/settings.local.json

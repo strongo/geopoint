@@ -1,6 +1,6 @@
-# Code graph of strongo/geo
+# Code graph of strongo/geopoint
 
-Indexed by [codegrapher](https://codegrapher.dev) · [Browse online](https://codegrapher.dev/github.com/strongo/geo)
+Indexed by [codegrapher](https://codegrapher.dev) · [Browse online](https://codegrapher.dev/github.com/strongo/geopoint)
 
 ## Contents
 

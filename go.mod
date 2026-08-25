@@ -1,3 +1,3 @@
 module github.com/strongo/geopoint
 
-go 1.17
+go 1.27.0

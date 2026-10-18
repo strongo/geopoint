@@ -1,89 +1,57 @@
 package geopoint
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
 
 func TestDegrees_Radians(t *testing.T) {
-	//goland:noinspection GoPreferNilSlice
 	tests := []struct {
 		name string
 		self Degrees
 		want Radians
 	}{
-		// TODO: Add test cases.
+		{name: "0 deg", self: 0, want: 0},
+		{name: "180 deg", self: 180, want: Radians(math.Pi)},
+		{name: "90 deg", self: 90, want: Radians(math.Pi / 2)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.self.Radians(); got != tt.want {
+			if got := tt.self.Radians(); math.Abs(float64(got-tt.want)) > 1e-9 {
 				t.Errorf("Radians() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestGeoPoint_DistanceTo(t *testing.T) {
-	type fields struct {
-		Latitude  Degrees
-		Longitude Degrees
-	}
-	type args struct {
-		another GeoPoint
-		f       Formula
-	}
-	//goland:noinspection GoPreferNilSlice
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   Kilometres
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			g := &GeoPoint{
-				Latitude:  tt.fields.Latitude,
-				Longitude: tt.fields.Longitude,
-			}
-			if got := g.DistanceTo(tt.args.another, tt.args.f); got != tt.want {
-				t.Errorf("DistanceTo() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestHaversine(t *testing.T) {
-	type args struct {
-		one GeoPoint
-		two GeoPoint
-	}
-	//goland:noinspection GoPreferNilSlice
+func TestRadians_Degrees(t *testing.T) {
 	tests := []struct {
 		name string
-		args args
-		want Kilometres
+		self Radians
+		want Degrees
 	}{
-		// TODO: Add test cases.
+		{name: "0 rad", self: 0, want: 0},
+		{name: "pi rad", self: Radians(math.Pi), want: 180},
+		{name: "pi/2 rad", self: Radians(math.Pi / 2), want: 90},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Haversine(tt.args.one, tt.args.two); got != tt.want {
-				t.Errorf("Haversine() = %v, want %v", got, tt.want)
+			if got := tt.self.Degrees(); math.Abs(float64(got-tt.want)) > 1e-9 {
+				t.Errorf("Degrees() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func TestKilometres_Miles(t *testing.T) {
-	//goland:noinspection GoPreferNilSlice
 	tests := []struct {
 		name string
 		self Kilometres
 		want Miles
 	}{
-		// TODO: Add test cases.
+		{name: "0 km", self: 0, want: 0},
+		{name: "10 km", self: 10, want: Miles(10 * mileInKilometres)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -95,13 +63,13 @@ func TestKilometres_Miles(t *testing.T) {
 }
 
 func TestMiles_Kilometres(t *testing.T) {
-	//goland:noinspection GoPreferNilSlice
 	tests := []struct {
 		name string
 		self Miles
 		want Kilometres
 	}{
-		// TODO: Add test cases.
+		{name: "0 mi", self: 0, want: 0},
+		{name: "10 mi", self: 10, want: Kilometres(10 * mileInKilometres)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -117,13 +85,16 @@ func TestNewGeoPoint(t *testing.T) {
 		latitude  Degrees
 		longitude Degrees
 	}
-	//goland:noinspection GoPreferNilSlice
 	tests := []struct {
 		name string
 		args args
 		want *GeoPoint
 	}{
-		// TODO: Add test cases.
+		{
+			name: "London",
+			args: args{latitude: 51.5074, longitude: -0.1278},
+			want: &GeoPoint{Latitude: 51.5074, Longitude: -0.1278},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,20 +105,38 @@ func TestNewGeoPoint(t *testing.T) {
 	}
 }
 
-func TestRadians_Degrees(t *testing.T) {
-	//goland:noinspection GoPreferNilSlice
-	tests := []struct {
-		name string
-		self Radians
-		want Degrees
-	}{
-		// TODO: Add test cases.
+func TestGeoPoint_DistanceTo(t *testing.T) {
+	p1 := GeoPoint{Latitude: 51.5074, Longitude: -0.1278}
+	p2 := GeoPoint{Latitude: 48.8566, Longitude: 2.3522}
+	called := false
+	mockFormula := func(one, two GeoPoint) Kilometres {
+		called = true
+		if one != p1 || two != p2 {
+			t.Errorf("unexpected arguments to formula: %v, %v", one, two)
+		}
+		return 343.5
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.self.Degrees(); got != tt.want {
-				t.Errorf("Degrees() = %v, want %v", got, tt.want)
-			}
-		})
+	got := p1.DistanceTo(p2, mockFormula)
+	if !called {
+		t.Error("expected formula to be called")
+	}
+	if got != 343.5 {
+		t.Errorf("DistanceTo() = %v, want 343.5", got)
+	}
+}
+
+func TestHaversine(t *testing.T) {
+	p1 := GeoPoint{Latitude: 51.5074, Longitude: -0.1278} // London
+	p2 := GeoPoint{Latitude: 48.8566, Longitude: 2.3522}  // Paris
+
+	// Same point distance should be 0
+	if dist := Haversine(p1, p1); dist != 0 {
+		t.Errorf("Haversine(p1, p1) = %v, want 0", dist)
+	}
+
+	dist := Haversine(p1, p2)
+	// London to Paris is ~343-344 km
+	if dist < 340 || dist > 345 {
+		t.Errorf("Haversine(London, Paris) = %v km, expected ~343-344 km", dist)
 	}
 }

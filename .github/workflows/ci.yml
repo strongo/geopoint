@@ -1,50 +1,29 @@
+name: Go CI
+
 on:
   push:
     branches:
       - main
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+' # Push events to matching v*, i.e. v20.15.10
+    paths:
+      - '.github/workflows/**.yml'
+      - '*.go'
   pull_request:
     branches:
-      - main
-name: Vet, Test, Build
+      - '**'
+    paths:
+      - '.github/workflows/**.yml'
+      - '*.go'
+
 jobs:
 
-  lint_and_test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Install Go
-        uses: actions/setup-go@v7
-        with:
-          go-version: '^1.17.0' # The Go version to download (if necessary) and use.
-
-
-      - uses: actions/cache@v6
-        with:
-          # In order:
-          # * Module download cache
-          # * Build cache (Linux)
-          # * Build cache (Mac)
-          # * Build cache (Windows)
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-            ~/Library/Caches/go-build
-            %LocalAppData%\go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      - name: Checkout code
-        uses: actions/checkout@v7
-
-      - name: go get ./...
-        run: go get ./...
-
-#      - name: Lint
-#        run: go run golang.org/x/lint/golint ./...
-
-      - name: go vet ./...
-        run: go vet ./...
-
-      - name: Test
-        run: go test ./...
+  strongo_workflow:
+    permissions:
+      contents: write
+    uses: strongo/cicd/.github/workflows/workflow.yml@main
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      code_coverage: true
+      min_test_coverage_percent: 100

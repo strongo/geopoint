@@ -9,12 +9,16 @@ on:
     paths:
       - '.github/workflows/**.yml'
       - '*.go'
+      - 'go.mod'
+      - 'go.sum'
   pull_request:
     branches:
       - '**'
     paths:
       - '.github/workflows/**.yml'
       - '*.go'
+      - 'go.mod'
+      - 'go.sum'
 
 jobs:
 
